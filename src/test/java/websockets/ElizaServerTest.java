@@ -56,16 +56,24 @@ public class ElizaServerTest {
 	}
 
 	@Test(timeout = 1000)
-	@Ignore
+	//@Ignore
 	public void onChat() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
-		// COMPLETE ME!!
-		List<String> list = new ArrayList<>();
-		ClientEndpointConfig configuration = ClientEndpointConfig.Builder.create().build();
-		ClientManager client = ClientManager.createClient();
-		client.connectToServer(new ElizaEndpointToComplete(list), configuration, new URI("ws://localhost:8025/websockets/eliza"));
-		// COMPLETE ME!!
-		// COMPLETE ME!!
-		// COMPLETE ME!!
+        List<String> list = new ArrayList<>();
+        ClientEndpointConfig configuration = ClientEndpointConfig.Builder.create().build();
+        ClientManager client = ClientManager.createClient();
+        Session session_test = client.connectToServer(new ElizaEndpointToComplete(list), configuration, new URI("ws://localhost:8025/websockets/eliza"));
+
+        session_test.getAsyncRemote().sendText("sorry i don't get it.");
+        Thread.sleep(50);
+
+        assertEquals("The doctor is in.", list.get(0));
+        assertEquals("What's on your mind?", list.get(1));
+        assertEquals("---", list.get(2));
+        assertEquals("Please don't apologize.", list.get(3));
+        assertEquals("---", list.get(4));
+        session_test.getAsyncRemote().sendText("bye bye");
+        Thread.sleep(50);
+        assertEquals(false, session_test.isOpen());
 	}
 
 	@After
@@ -102,8 +110,6 @@ public class ElizaServerTest {
         @Override
         public void onOpen(Session session, EndpointConfig config) {
 
-            // COMPLETE ME!!!
-
             session.addMessageHandler(new ElizaMessageHandlerToComplete());
         }
 
@@ -112,7 +118,6 @@ public class ElizaServerTest {
             @Override
             public void onMessage(String message) {
                 list.add(message);
-                // COMPLETE ME!!!
             }
         }
     }
